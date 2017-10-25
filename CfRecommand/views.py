@@ -6,6 +6,10 @@ import json
 # Create your views here.
 # -*- coding: utf-8 -*-
 #from __future__ import unicode_literals
+# coding: utf-8
+
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 # Create your views here.
 def hello(request):
@@ -15,18 +19,15 @@ def hello(request):
 
 def predict(request):
   if request.method == 'POST':
-    name = request.POST.get('book')
-    status = 0
-    result = "Error!"
-  return HttpResponse(json.dumps({
-      "status": status,
-      "result": result
-  }))
+    books = request.POST.get('books')
+    book_list = recommand(get_cur_id(books))
+  result = {'result': book_list}
+  return HttpResponse(json.dumps(result))
 
 # cur fav: reader's favourite book
 def recommand(cur_fav):
   book_score = dict()
-  book_list = list()
+  book_list = []
   for id_str in OriginRecommandList.objects.all():
     b_ids = id_str.split(' ')
     single_fav = []
@@ -50,10 +51,11 @@ def recommand(cur_fav):
   return book_list
 
 # get specify book ID
-# cur_name：user's favourite book
+# cur_name: user's favourite book
 def get_cur_id(cur_name):
   cur_fav = []
-  for single_book in cur_name:
+  cur_names = cur_name.split('，')
+  for single_book in cur_names:
     # if new book name is error, how to do
     single_id, is_create = BookIds.objects.get_or_create(book_name = single_book)
     if is_create:

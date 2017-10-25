@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>洋子推书</title>
+    <title>书单交换市场</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
@@ -26,15 +26,25 @@
     <script type="text/javascript">
     $(document).ready(function(){
       $("#submit").click(function(){
-        $.post("http://10.187.23.158/predict",
-        {
-          book:"Donald Duck",
-          city:"Duckburg"
-        },
-        function(data,status){
-          alert("Data: " + data + "\nStatus: " + status);
+        var post_data = {
+          "name": $("#ori-book").val(),
+        };
+
+        $.ajaxSetup({
+          data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
-        alert($("#ori-book").val());
+        $.ajax({
+          url: '/predict/',
+          type: "POST",
+          data: post_data,
+          success: function (data) {
+            data = JSON.parse(data);
+            alert(data["result"]);
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown){  
+            alert(textStatus);  
+          }
+        });
       });
     });
     </script>
@@ -59,7 +69,7 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     
     <div class="container">
-      <h1>洋子推书</h1>
+      <h1>书单交换市场</h1>
       <p>请在下面输入你喜欢的小说的名字，以逗号隔开<p>
     </div>
 
