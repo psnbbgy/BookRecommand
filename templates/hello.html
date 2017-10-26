@@ -27,7 +27,7 @@
     $(document).ready(function(){
       $("#submit").click(function(){
         var post_data = {
-          "name": $("#ori-book").val(),
+          "books": $("#ori-book").val(),
         };
 
         $.ajaxSetup({
@@ -39,7 +39,8 @@
           data: post_data,
           success: function (data) {
             data = JSON.parse(data);
-            alert(data["result"]);
+            arr = JSON.parse(data["result"])
+            alert(arr);
           },
           error: function(XMLHttpRequest, textStatus, errorThrown){  
             alert(textStatus);  

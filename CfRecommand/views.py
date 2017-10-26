@@ -1,3 +1,5 @@
+#!/usr/bin/python
+#coding:utf-8
 from django.shortcuts import render
 from django.http import HttpResponse 
 import json
@@ -6,10 +8,6 @@ import json
 # Create your views here.
 # -*- coding: utf-8 -*-
 #from __future__ import unicode_literals
-# coding: utf-8
-
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
 # Create your views here.
 def hello(request):
@@ -18,10 +16,17 @@ def hello(request):
   return render(request, 'hello.html', context)
 
 def predict(request):
+  book_list = []
+  book_list.append('wa')
+  book_list.append('wa')
+  book_list.append('wa')
+  books = ''
   if request.method == 'POST':
     books = request.POST.get('books')
-    book_list = recommand(get_cur_id(books))
-  result = {'result': book_list}
+    #book_list = get_cur_id(books)
+    #book_list = recommand(get_cur_id(books))
+  books = ''.join(book_list)
+  result = {'result': books}
   return HttpResponse(json.dumps(result))
 
 # cur fav: reader's favourite book
@@ -47,14 +52,20 @@ def recommand(cur_fav):
   for key, value in sort_score.items():
     book_list.append(BookIds.objects.get(book_id = key).book_name)
     i = i + 1
+  book_res = []
+  i = 0
+  for book in book_list:
+    if i < 10:
+      book_res.append(book)
   # user_fav.append(cur_fav) new book's id must write into db
-  return book_list
+  return book_res
 
 # get specify book ID
 # cur_name: user's favourite book
 def get_cur_id(cur_name):
   cur_fav = []
   cur_names = cur_name.split('，')
+  return cur_names
   for single_book in cur_names:
     # if new book name is error, how to do
     single_id, is_create = BookIds.objects.get_or_create(book_name = single_book)
